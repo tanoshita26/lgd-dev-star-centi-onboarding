@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store';
 import { setCurrentStep } from '../../store/slices/formSlice';
@@ -7,6 +7,7 @@ import { useTranslation } from '../../hooks/useTranslation';
 export const Step14Review: React.FC = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const [disabled, setDisabled] = useState(false);
   const formState = useSelector((state: RootState) => state.form);
   const handleEdit = (step: number) => {
     dispatch(setCurrentStep(step));
@@ -30,30 +31,11 @@ export const Step14Review: React.FC = () => {
   );
 
   const submitButtonClicked = async (e: React.FormEvent) => {
+    setDisabled(true);
     console.log(formState);
     e.preventDefault();
 
     const formData = new FormData();
-    // formData.append('company_name', formState.companyInfo.name);
-    // formData.append('street', formState.companyInfo.address);
-    // formData.append('postal_code', formState.companyInfo.postal);
-    // formData.append('city', formState.companyInfo.city);
-    // formData.append('country_residence', formState.companyInfo.canton);
-    // formData.append('phone', formState.companyInfo.phone);
-    // formData.append('uid', formState.entityInfo.uid);
-    // formData.append('incorporation_date', formState.entityInfo.incorporationDate);
-    // formData.append('uid_sole', formState.soleProprietorInfo.uid);
-    // formData.append('establishment_date', formState.soleProprietorInfo.establishmentDate);
-    // formData.append('owner_name', formState.soleProprietorInfo.ownerName);
-    // formData.append('owner_dob', formState.soleProprietorInfo.ownerDob);
-    // formData.append('owner_nationality', formState.soleProprietorInfo.ownerNationality);
-    // formData.append('owner_address', formState.soleProprietorInfo.ownerAddress);
-    // formData.append('verification_method', formState.verificationInfo.verificationMethod);
-    // formData.append('person_1_name', formState.establishingPersons[0].name);
-    // formData.append('person_1_dob', formState.establishingPersons[0].dob);
-    // formData.append('person_1_nationality', formState.establishingPersons[0].nationality);
-    // formData.append('person_1_auth', formState.establishingPersons[0].toa);
-
     const today = new Date();
     const formattedDate = `${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getDate().toString().padStart(2, '0')}/${today.getFullYear()}`;
     formData.append('5', formattedDate);
@@ -112,6 +94,7 @@ export const Step14Review: React.FC = () => {
       });
       let data = await response.json();
       console.log('Response:', data);
+      setDisabled(false);
     } catch (error) {
       console.error('Error submitting form:', error);
     }
@@ -279,10 +262,21 @@ export const Step14Review: React.FC = () => {
       <div className="mt-6 text-right">
         <button
           type="submit"
-          className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition"
+          className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={submitButtonClicked}
+          disabled={disabled}
         >
-          <span data-i18n="submit_final">Submit Application</span>
+          {disabled ? (
+            <span className="flex items-center">
+              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Generating...
+            </span>
+          ) : (
+            <span data-i18n="submit_final">Submit Application</span>
+          )}
         </button>
       </div>
     </section >
