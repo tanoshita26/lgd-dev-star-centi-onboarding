@@ -88,7 +88,7 @@ export const Step14Review: React.FC = () => {
 
 
     try {
-      let response = await fetch('http://localhost:5000/api/submit', {
+      let response = await fetch('http://lgd-dev-star-centi-onboarding-backend.up.railway.app/api/submit', {
         method: 'POST',
         body: formData,
       });
