@@ -92,9 +92,16 @@ export const Step14Review: React.FC = () => {
         method: 'POST',
         body: formData,
       });
-      let data = await response.json();
-      console.log('Response:', data);
+      let pdfBlob = await response.blob();
+      console.log(pdfBlob);
       setDisabled(false);
+      const url = window.URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `GeneratedForm_${Date.now()}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
     } catch (error) {
       console.error('Error submitting form:', error);
     }
